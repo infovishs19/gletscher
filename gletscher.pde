@@ -21,7 +21,7 @@ int total = 0;
 boolean one = true;
 float y = 0;
 
-
+float timer;
 // Processing Standard Functions
 void settings() 
 {
@@ -61,14 +61,22 @@ void setup() {
 
   frameRate(30);
 
+  timer = millis();
   ready = true;
 }
 
 void draw() {
 
+
   if (!ready) {
     background(0);
     return;
+  }
+
+  //change year every 300 millis
+  if (millis()-timer>300) {
+    timer = millis();
+    updateYear();
   }
 
   float boxX = 0;
@@ -123,15 +131,15 @@ void draw() {
     Float floatObject = boxHeights.get(name);
     float easedValue = ease(floatObject.floatValue(), targetBoxHeight);
     boxHeights.put(name, easedValue);
-    
+
     // Box zeichnen
-    canvas.fill(230,230,230);
-    canvas.stroke(0,0,0);
+    canvas.fill(230, 230, 230);
+    canvas.stroke(0, 0, 0);
     canvas.strokeWeight(2);
     float h = boxHeights.get(name);
     canvas.rect(boxX, boxY, boxWidth, h);
-    
-    
+
+
     // Name Gletscher
     canvas.pushMatrix();
     canvas.fill(0);
@@ -141,21 +149,21 @@ void draw() {
     // Schriftgrösse und/oder Position ändern, wenn balken schmäler als 850
     Gletscher current = dataStartYear.get(i);
     float currentHeight = boxHeights.get(name);
-    if(current.absoluteLength < 510){
+    if (current.absoluteLength < 510) {
       canvas.textSize(12);
       canvas.translate(boxX+11.5, currentHeight-9);
-    }else if (current.absoluteLength < 850){
+    } else if (current.absoluteLength < 850) {
       canvas.textSize(18);
       canvas.translate(boxX+17, currentHeight-9);
-    }else{
+    } else {
       canvas.textSize(18);
-      canvas.translate(boxX+21,currentHeight-9);
+      canvas.translate(boxX+21, currentHeight-9);
     }
     canvas.rotate(PI / -2.0);
     canvas.textAlign(LEFT);
     canvas.text(dataYear.get(i).name, 0, 0);
     canvas.popMatrix();
-    
+
     // Change Attributes
     boxX = boxX+boxWidth;
   }
@@ -231,4 +239,16 @@ float ease(float n, float target) {
   float easing = 0.05;
   float d = target - n;
   return n + d * easing;
+}
+
+void updateYear() { 
+
+  actualYear++;
+  a++;
+
+  // Im Jahr 2090 die Animation beenden
+  if (actualYear>=2090) {
+    actualYear = 2090;
+    a = 190;
+  }
 }
