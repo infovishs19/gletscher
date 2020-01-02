@@ -81,7 +81,7 @@ void draw() {
 
   float boxX = 0;
   float boxY = 0;
-  float screen = (float)width/4.0;
+  float screen = (float)canvas.width/4.0;
 
   // Filter aktuelles Jahr
   List<Gletscher> dataYear = filterYear(dataGlacierLength, actualYear);
@@ -168,9 +168,56 @@ void draw() {
     boxX = boxX+boxWidth;
   }
 
+  if (a < dataTemperatur.size()) {
+
+    // Linie Temperatur
+    float col = map(dataTemperatur.get(a).temp, 0, 11, 0, 1);
+    float targetY = map(dataTemperatur.get(a).temp, 0, 11, canvas.height/1.5, 0);
+    y = ease(y, targetY);
+
+    color fromBlue = color(255, 255, 255);
+    color toBlue = color(7, 59, 115);
+    color tempColBlue = lerpColor(fromBlue, toBlue, col);
+    color fromRed = color(255, 255, 255);
+    color toRed = color(130, 7, 7);
+    color tempColRed = lerpColor(fromRed, toRed, col);
+
+    if (dataTemperatur.get(a).temp > 5.36) {
+      canvas.stroke(tempColRed);
+    } else {
+      canvas.stroke(tempColBlue);
+    }
+
+    canvas.strokeWeight(4);
+    canvas.line(0, y, canvas.width, y);
+
+    // Jahr Temperatur
+    if (dataTemperatur.get(a).temp > 5.36) {
+      canvas.fill(tempColRed);
+    } else {
+      canvas.fill(tempColBlue);
+    }
+
+    canvas.noStroke();
+    canvas.textFont(fontBold);
+    // textStyle(BOLD); -> nur nötig, wenn keine Schrift eingebunden
+    canvas.textSize(22);
+    canvas.textAlign(LEFT);
+    // Durchschnittstemperatur CH Jahr
+    canvas.text(("Ø CH ") + dataTemperatur.get(a).year, screen/2-45, y-12);
+    canvas.text(("Ø CH ") +dataTemperatur.get(a).year, (screen/2-45)+screen, y-12);
+    canvas.text(("Ø CH ") + dataTemperatur.get(a).year, (screen/2-45)+(screen*2), y-12);
+    canvas.text(("Ø CH ") + dataTemperatur.get(a).year, (screen/2-45)+(screen*3), y-12);
+    // Temperatur
+    //float rounded = dataTemperatur.get(a).temp.toFixed(2);
+    String rounded = nf(dataTemperatur.get(a).temp, 0, 2);
+    canvas.text(rounded + (" °C"), screen/2-45, y+28);
+    canvas.text(rounded + (" °C"), (screen/2-45)+screen, y+28);
+    canvas.text(rounded + (" °C"), (screen/2-45)+(screen*2), y+28);
+    canvas.text(rounded + (" °C"), (screen/2-45)+(screen*3), y+28);
+  }
+
   canvas.endDraw();
-
-
 
   image(canvas, 0, 0, width, height);
 }
