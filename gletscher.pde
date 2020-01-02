@@ -2,6 +2,8 @@ int canvasW = 7680;
 int canvasH = 1080;
 PGraphics canvas;
 
+PFont fontRegular;
+PFont fontBold;
 
 float [] dataGlacierLength;
 float [] dataTemperatur;
