@@ -77,6 +77,8 @@ void draw() {
   // Filter aktuelles Jahr
   List<Gletscher> dataYear = filterYear(dataGlacierLength, actualYear);
 
+  // Filter Start Jahr -> um boxWidth zu ermitteln
+  List<Gletscher> dataStartYear = filterYear(dataGlacierLength, startYear);
 
 
 
