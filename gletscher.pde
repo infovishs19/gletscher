@@ -1,3 +1,5 @@
+import java.util.*;
+
 int canvasW = 7680;
 int canvasH = 1080;
 PGraphics canvas;
@@ -34,6 +36,28 @@ void setup() {
 
   dataGlacierLength =  loadGlacierData("glacier_data.csv");
   dataTemperatur =  loadTemperaturData("temp.csv");
+
+  HashSet<String> glacierNames = new HashSet<String>(); 
+  for (Gletscher g : dataGlacierLength) {
+    glacierNames.add(g.name);
+  }
+
+  Map<String, Float> boxHeights = new HashMap<String, Float>();
+
+  for (String name : glacierNames) {
+    float h = height-marginBottom;
+    Float fh = new Float(h);
+    boxHeights.put(name, fh);
+  }
+
+
+  // Startwert der Höhe der Temperaturlinie
+  y = map(dataTemperatur.get(0).temp, 0, 11, height/2, 0);
+  println("y " + y);
+
+  frameRate(30);
+
+  ready = true;
 }
 
 void draw() {
@@ -72,9 +96,10 @@ class Gletscher {
 
 class Temperatur {
 
-int year; float temp;
+  int year; 
+  float temp;
 
-  Temperatur(int year,float temp) {
+  Temperatur(int year, float temp) {
     this.year = year;
     this.temp = temp;
   }
