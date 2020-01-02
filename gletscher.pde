@@ -2,6 +2,22 @@ int canvasW = 7680;
 int canvasH = 1080;
 PGraphics canvas;
 
+
+float [] dataGlacierLength;
+float [] dataTemperatur;
+boolean ready = false;
+
+float [] boxHeights;
+float marginBottom = 55;
+float boxWidth = 0;
+int startYear = 1900;
+int actualYear = startYear;
+int a = 0;
+int total = 0;
+boolean one = true;
+float y = 0;
+
+
 // Processing Standard Functions
 void settings() 
 {
