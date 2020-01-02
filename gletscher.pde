@@ -55,12 +55,31 @@ void setup() {
   y = map(dataTemperatur.get(0).temp, 0, 11, height/2, 0);
   println("y " + y);
 
+  //sort array 
+  Collections.sort(dataGlacierLength);
+
   frameRate(30);
 
   ready = true;
 }
 
 void draw() {
+
+  if (!ready) {
+    background(0);
+    return;
+  }
+
+  float boxX = 0;
+  float boxY = 0;
+  float screen = (float)width/4.0;
+
+  // Filter aktuelles Jahr
+  List<Gletscher> dataYear = filterYear(dataGlacierLength, actualYear);
+
+
+
+
   canvas.beginDraw();
   canvas.background(0, 0, 255);
   canvas.fill(255, 0, 0);
@@ -70,7 +89,7 @@ void draw() {
 }
 
 
-class Gletscher {
+class Gletscher implements Comparable<Gletscher> {
 
   String name;
   int size;
@@ -91,8 +110,27 @@ class Gletscher {
   String toString() {
     return this.name + ", " + this.year + ", " + this.size;
   }
+
+
+  @Override     
+    public int compareTo(Gletscher other) {          
+    return (this.breitengrad < other.breitengrad ? -1 : 
+      (this.breitengrad == other.breitengrad ? 0 : 1));
+  }
 }
 
+List<Gletscher> filterYear(ArrayList<Gletscher> arr, int year) {
+  List<Gletscher> filterList = new ArrayList<Gletscher>();
+
+  for ( Gletscher g : arr) { 
+    // or equalsIgnoreCase or whatever your conditon is
+    if (g.year == year) {
+      // do something 
+      filterList.add(g);
+    }
+  }
+  return filterList;
+}
 
 class Temperatur {
 
