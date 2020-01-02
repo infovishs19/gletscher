@@ -11,7 +11,7 @@ ArrayList<Gletscher> dataGlacierLength;
 ArrayList<Temperatur> dataTemperatur;
 boolean ready = false;
 
-float [] boxHeights;
+Map<String, Float> boxHeights;
 float marginBottom = 55;
 float boxWidth = 0;
 int startYear = 1900;
@@ -25,7 +25,8 @@ float y = 0;
 // Processing Standard Functions
 void settings() 
 {
-  size(1280, 180, P3D);
+  //size(1280, 180, P3D);
+  size(canvasW/4, canvasH/4, P3D);
   PJOGL.profile=1;
 }
 
@@ -42,7 +43,7 @@ void setup() {
     glacierNames.add(g.name);
   }
 
-  Map<String, Float> boxHeights = new HashMap<String, Float>();
+  boxHeights = new HashMap<String, Float>();
 
   for (String name : glacierNames) {
     float h = height-marginBottom;
@@ -80,13 +81,66 @@ void draw() {
   // Filter Start Jahr -> um boxWidth zu ermitteln
   List<Gletscher> dataStartYear = filterYear(dataGlacierLength, startYear);
 
+  // Beim ersten Durchlauf der For-Schleife sollen alle Werte der Spalte "absoluteLength" addiert werden
+  // Wert brauche ich für die Berechnung der jeweiligen Boxbreite -> mit map() hat es nicht wie gewünscht funktioniert
+  if (one == true) {
+    for (int z=0; z<dataYear.size(); z++) {
+      total = total + dataYear.get(z).absoluteLength;
+    }
+    one = false;
+  }
 
 
   canvas.beginDraw();
-  canvas.background(0, 0, 255);
-  canvas.fill(255, 0, 0);
-  canvas.ellipse(550, 500, 100, 100);
+  canvas.background(0);
+
+  // Skala Text
+  canvas.fill(230, 230, 230);
+  canvas.noStroke();
+  canvas.textFont(fontRegular);
+  // textStyle(NORMAL) -> nur nötig, wenn keine Schrift eingebunden;
+  canvas.textSize(18);
+  canvas.textAlign(RIGHT);
+  canvas.text("Gletscherlänge im Jahr 1900 = 100%", canvas.width-20, canvas.height-marginBottom+20);
+  // SkalaLine
+  canvas.stroke(230, 230, 230);
+  canvas.strokeWeight(2);
+  canvas.line(canvas.width-270, canvas.height-marginBottom, canvas.width, canvas.height-marginBottom);
+
+
+  for (int i=0; i<dataYear.size(); i++) {
+
+    // startValueGlacier
+    float maxValueGlacier = dataStartYear.get(i).absoluteLength;
+
+    // Breite der Box ausrechnen
+    boxWidth = dataStartYear.get(i).absoluteLength;
+    boxWidth = (float)canvas.width/total*boxWidth;
+
+    // alle Boxen gleich breit
+    float targetBoxHeight = map(dataYear.get(i).absoluteLength, 0, maxValueGlacier, 0, canvas.height-marginBottom);
+    String name = dataYear.get(i).name;
+    Float floatObject = boxHeights.get(name);
+    float easedValue = ease(floatObject.floatValue(), targetBoxHeight);
+    boxHeights.put(name, easedValue);
+    
+    // Box zeichnen
+    canvas.fill(230,230,230);
+    canvas.stroke(0,0,0);
+    canvas.strokeWeight(2);
+    float h = boxHeights.get(name);
+    canvas.rect(boxX, boxY, boxWidth, 500);
+    
+    
+    
+    // Change Attributes
+    boxX = boxX+boxWidth;
+  }
+
   canvas.endDraw();
+
+
+
   image(canvas, 0, 0, width, height);
 }
 
@@ -147,4 +201,11 @@ class Temperatur {
   String toString() {
     return this.year + ", " + this.temp;
   }
+}
+
+// Easing Funktion
+float ease(float n, float target) {
+  float easing = 0.05;
+  float d = target - n;
+  return n + d * easing;
 }
