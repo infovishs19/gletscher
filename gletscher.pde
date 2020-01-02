@@ -129,9 +129,32 @@ void draw() {
     canvas.stroke(0,0,0);
     canvas.strokeWeight(2);
     float h = boxHeights.get(name);
-    canvas.rect(boxX, boxY, boxWidth, 500);
+    canvas.rect(boxX, boxY, boxWidth, h);
     
     
+    // Name Gletscher
+    canvas.pushMatrix();
+    canvas.fill(0);
+    canvas.noStroke();
+    canvas.textFont(fontRegular);
+    // textStyle(NORMAL); -> nur nötige, wenn keine Schrift eingebunden
+    // Schriftgrösse und/oder Position ändern, wenn balken schmäler als 850
+    Gletscher current = dataStartYear.get(i);
+    float currentHeight = boxHeights.get(name);
+    if(current.absoluteLength < 510){
+      canvas.textSize(12);
+      canvas.translate(boxX+11.5, currentHeight-9);
+    }else if (current.absoluteLength < 850){
+      canvas.textSize(18);
+      canvas.translate(boxX+17, currentHeight-9);
+    }else{
+      canvas.textSize(18);
+      canvas.translate(boxX+21,currentHeight-9);
+    }
+    canvas.rotate(PI / -2.0);
+    canvas.textAlign(LEFT);
+    canvas.text(dataYear.get(i).name, 0, 0);
+    canvas.popMatrix();
     
     // Change Attributes
     boxX = boxX+boxWidth;
